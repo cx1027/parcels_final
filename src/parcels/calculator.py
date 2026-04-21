@@ -1,6 +1,6 @@
 from typing import List
 
-from parcels.models import Parcel, ParcelResult, CostResult
+from parcels.models import Parcel, ParcelResult, CostResult, SpeedyResult
 
 
 class ParcelCostCalculator:
@@ -59,3 +59,32 @@ class ParcelCostCalculator:
             total += cost
 
         return CostResult(parcels=parcel_results, total_cost=total)
+
+    @classmethod
+    def calculate_with_speedy(cls, parcels: List[Parcel]) -> CostResult:
+        """Calculate costs with speedy shipping applied.
+
+        Speedy shipping doubles the base cost of the order.
+        The speedy surcharge is listed as a separate item and does not
+        affect individual parcel costs.
+        """
+        if not parcels:
+            base_result = CostResult(parcels=[], total_cost=0.0)
+            speedy_result = SpeedyResult(base_cost=0.0, speedy_cost=0.0, total_cost=0.0)
+            return CostResult(
+                parcels=[], total_cost=0.0, speedy_cost=0.0, speedy_service=speedy_result
+            )
+
+        base_result = cls.calculate(parcels)
+        speedy_cost = base_result.total_cost
+        speedy_result = SpeedyResult(
+            base_cost=base_result.total_cost,
+            speedy_cost=speedy_cost,
+            total_cost=base_result.total_cost + speedy_cost,
+        )
+        return CostResult(
+            parcels=base_result.parcels,
+            total_cost=speedy_result.total_cost,
+            speedy_cost=speedy_cost,
+            speedy_service=speedy_result,
+        )

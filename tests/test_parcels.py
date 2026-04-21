@@ -1,5 +1,5 @@
 import pytest
-from parcels import Parcel, ParcelCostCalculator, CostResult, ParcelResult
+from parcels import Parcel, ParcelCostCalculator, CostResult, ParcelResult, SpeedyResult
 
 
 class TestParcelClassification:
@@ -136,3 +136,61 @@ class TestCostCalculation:
 
         for item in result.parcels:
             assert isinstance(item, ParcelResult)
+
+
+class TestSpeedyShipping:
+    """Tests for speedy shipping cost calculation."""
+
+    def test_speedy_doubles_total_cost(self):
+        parcel = Parcel(length=5, width=5, height=5)
+        result = ParcelCostCalculator.calculate_with_speedy([parcel])
+
+        assert result.total_cost == 6.0
+
+    def test_speedy_cost_equals_base_cost(self):
+        parcel = Parcel(length=5, width=5, height=5)
+        result = ParcelCostCalculator.calculate_with_speedy([parcel])
+
+        assert result.speedy_cost == 3.0
+
+    def test_speedy_service_is_separate_item(self):
+        parcel = Parcel(length=5, width=5, height=5)
+        result = ParcelCostCalculator.calculate_with_speedy([parcel])
+
+        assert result.speedy_service is not None
+        assert isinstance(result.speedy_service, SpeedyResult)
+        assert result.speedy_service.base_cost == 3.0
+        assert result.speedy_service.speedy_cost == 3.0
+        assert result.speedy_service.total_cost == 6.0
+
+    def test_individual_parcel_costs_unchanged(self):
+        parcels = [
+            Parcel(length=5, width=5, height=5),
+            Parcel(length=30, width=20, height=15),
+            Parcel(length=80, width=60, height=70),
+        ]
+        base_result = ParcelCostCalculator.calculate(parcels)
+        speedy_result = ParcelCostCalculator.calculate_with_speedy(parcels)
+
+        assert base_result.parcels[0].cost == speedy_result.parcels[0].cost
+        assert base_result.parcels[1].cost == speedy_result.parcels[1].cost
+        assert base_result.parcels[2].cost == speedy_result.parcels[2].cost
+
+    def test_speedy_multiple_parcels(self):
+        parcels = [
+            Parcel(length=5, width=5, height=5),
+            Parcel(length=30, width=20, height=15),
+        ]
+        result = ParcelCostCalculator.calculate_with_speedy(parcels)
+
+        assert result.total_cost == (3.0 + 8.0) * 2
+        assert result.speedy_cost == 3.0 + 8.0
+
+    def test_speedy_empty_list(self):
+        result = ParcelCostCalculator.calculate_with_speedy([])
+
+        assert result.total_cost == 0.0
+        assert result.speedy_cost == 0.0
+        assert result.speedy_service.base_cost == 0.0
+        assert result.speedy_service.speedy_cost == 0.0
+        assert result.speedy_service.total_cost == 0.0

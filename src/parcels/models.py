@@ -22,7 +22,17 @@ class ParcelResult:
 
 
 @dataclass(frozen=True)
+class SpeedyResult:
+    """The cost breakdown for speedy shipping."""
+    base_cost: float
+    speedy_cost: float
+    total_cost: float
+
+
+@dataclass(frozen=True)
 class CostResult:
     """The overall cost calculation result for a collection of parcels."""
     parcels: List[ParcelResult]
     total_cost: float
+    speedy_cost: float = 0.0
+    speedy_service: SpeedyResult = None
