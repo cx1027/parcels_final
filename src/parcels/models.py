@@ -7,10 +7,12 @@ class Parcel:
     """Represents a parcel with its physical dimensions.
 
     All dimensions are in centimeters.
+    speedy indicates whether speedy shipping is requested for this parcel.
     """
     length: float
     width: float
     height: float
+    speedy: bool = False
 
 
 @dataclass(frozen=True)
@@ -19,14 +21,8 @@ class ParcelResult:
     parcel: Parcel
     type: str
     cost: float
-
-
-@dataclass(frozen=True)
-class SpeedyResult:
-    """The cost breakdown for speedy shipping."""
-    base_cost: float
-    speedy_cost: float
-    total_cost: float
+    speedy_cost: float = 0.0
+    speedy_service: float = None
 
 
 @dataclass(frozen=True)
@@ -34,5 +30,4 @@ class CostResult:
     """The overall cost calculation result for a collection of parcels."""
     parcels: List[ParcelResult]
     total_cost: float
-    speedy_cost: float = 0.0
-    speedy_service: SpeedyResult = None
+    speedy_total_cost: float = 0.0
