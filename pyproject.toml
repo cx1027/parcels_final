@@ -1,5 +1,0 @@
-[project]
-name = "parcels"
-version = "0.1.0"
-description = "Parcel delivery cost calculator library"
-requires-python = ">=3.10"

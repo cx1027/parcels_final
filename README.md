@@ -5,7 +5,7 @@ A Python library for calculating parcel delivery costs based on dimensions.
 ## Installation
 
 ```bash
-pip install -e .
+pip install -r requirements.txt
 ```
 
 ## Usage
