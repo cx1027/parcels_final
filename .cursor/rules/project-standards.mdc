@@ -14,17 +14,17 @@ alwaysApply: true
 ## Strict Execution
 
 - Follow every user requirement exactly.
-- Do not merge separate requested items unless the user explicitly asks for merging.
-- If the user asks for a standalone implementation (for example, "separate speedy"), keep it standalone.
 - Do not rename public APIs, files, classes, or functions unless requested.
 - Do not make "helpful" extra improvements outside the requested scope.
 
 ## Architecture
 
-- Separate data models and business logic.
-- Data models should contain data shape, type annotations, and minimal invariant validation only.
-- Business rules, pricing, discount search, orchestration, and workflows must live in service/domain modules.
+- Separate data models and business logic into different modules.
 - Avoid mixing DTOs/entities with calculation or workflow logic in the same module unless explicitly requested.
+
+## Package Management
+
+- Use `requirements.txt` for all pip installations. Never use `pip install -e .` or `pyproject.toml` for dependency management in this project.
 
 ## Change Safety
 
